@@ -1,8 +1,12 @@
 <html>
   <body>
-    <h1>the list of available catalogs</h1>
+    <h1>the list of all categories</h1>
+    <a href="{{url_for('addCatalog')}}" > <h3> Create a New category </h3> </a>
     {% for i in catalogs %}
-    {{i.name}}
+
+    <a href="{{url_for('getCategory', category_id=i.id)}}"><p>{{i.name}}</p></a>
+    <p><a href="{{url_for('editCategory', category_id=i.id)}}">Edit</a></p>
+    <p><a href="{{url_for('deleteCategory', category_id=i.id)}}">Delete</a></p> 
     </br>
     {% endfor %}
   </body>
