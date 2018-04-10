@@ -1,11 +1,6 @@
-<html>
-
-
-<head>
-	</head>
-
-<body>
-
+{% extends "main.html" %}
+{% block content %}
+{% include "header.html" %}
 <h1> Edit Category </h1>
 
 
@@ -13,7 +8,7 @@
 
 
 	<p>Name:</p>
-		<input type ='text' size='30' name='name' placeholder = '{{restaurant.name }}'>
+		<input type ='text' size='30' name='name' placeholder = '{{category.name }}'>
 
 
 <input type='submit' value='Edit'>
@@ -22,6 +17,4 @@
 <a href = '{{url_for('getCatalog')}}'> Cancel </a>
 
 </form>
-</body>
-
-</html>
+{% endblock content %}

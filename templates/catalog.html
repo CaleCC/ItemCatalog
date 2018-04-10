@@ -1,5 +1,7 @@
-<html>
-  <body>
+{% extends "main.html" %}
+{% block content %}
+{% include "header.html" %}
+  <div>
     <h1>the list of all categories</h1>
     <a href="{{url_for('addCatalog')}}" > <h3> Create a New category </h3> </a>
     {% for i in catalogs %}
@@ -9,5 +11,5 @@
     <p><a href="{{url_for('deleteCategory', category_id=i.id)}}">Delete</a></p> 
     </br>
     {% endfor %}
-  </body>
-</html>
+  </div>
+{% endblock content %}

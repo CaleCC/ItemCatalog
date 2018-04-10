@@ -1,10 +1,6 @@
-<html>
-
-<head>
-
-	</head>
-<body>
-
+{% extends "main.html" %}
+{% block content %}
+{% include "header.html" %}
 <h1>New Item in category {{category.name}}</h1>
 
 <form action="#" method = 'post'>
@@ -18,7 +14,4 @@
 
 
 <input type='submit' value='Create'>
-
-</form>
-
-</body>
+{% endblock content %}
