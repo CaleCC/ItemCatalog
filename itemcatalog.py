@@ -3,7 +3,7 @@ from flask import session as login_session
 app = Flask(__name__)
 
 
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine,desc
 engine = create_engine('sqlite:///catalogwithusers.db')
 
 from sqlalchemy.orm import sessionmaker
@@ -18,7 +18,8 @@ session = DBSession()
 @app.route('/catalog/')
 def getCatalog():
     catalog = session.query(Category).all()
-    return render_template("catalog.html", catalogs = catalog)
+    latestItems = session.query(Item).order_by(desc(Item.created_time))
+    return render_template("catalog.html", catalogs = catalog, latestItems = latestItems)
     #return 'this is the page for display all catalog'
 
 
