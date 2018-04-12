@@ -1,7 +1,10 @@
 {% extends "main.html" %}
 {% block content %}
 {% include "header.html" %}
-<h1> Are you sure you want to delete {{item.name}}? </h1>
+
+<div class="row">
+
+<h2> Are you sure you want to delete {{item.name}}? </h2>
 <p>Item description:</p>
 <p>{{item.description}}</p>
 
@@ -15,4 +18,5 @@
 </form>
 
 <a href = '#'> Cancel </a>
+</div>
 {% endblock content %}

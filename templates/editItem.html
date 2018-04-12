@@ -1,12 +1,9 @@
-<html>
+{% extends "main.html" %}
+{% block content %}
+{% include "header.html" %}
 
-
-<head>
-	</head>
-
-<body>
-
-<h1> Edit Item </h1>
+<div class="row">
+<h2> Edit Item </h2>
 
 
 <form action="{{ url_for('editItem',item_id = item.id, category_id = item.category_id)}}" method = 'post'>
@@ -23,6 +20,5 @@
 <a href = '{{url_for('getItem', item_id = item.id)}}'> Cancel </a>
 
 </form>
-</body>
-
-</html>
+</div>
+{% endblock content %}

@@ -1,7 +1,8 @@
 {% extends "main.html" %}
 {% block content %}
 {% include "header.html" %}
-<h1> Are you sure you want to delete {{category.name}}? </h1>
+<div class="row">
+<h2> Are you sure you want to delete {{category.name}}? </h2>
 
 <form action="#" method = 'post'>
 
@@ -13,4 +14,5 @@
 </form>
 
 <a href = '#'> Cancel </a>
+</div>
 {% endblock content %}

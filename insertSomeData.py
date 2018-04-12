@@ -25,7 +25,7 @@ item = Item(name = 'Goggles',
             description = 'close-fitting eyeglasses with side shields, for' +
             'proecting the eyes from glare, dust, water',
             category_id = '1',
-            owner_id = '1')
+            owner = 'Eason')
 
 session.add(item)
 session.commit()

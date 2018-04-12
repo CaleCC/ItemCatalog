@@ -53,7 +53,7 @@ class  Item(Base):
     description = Column(String)
     category_id = Column(String(80), ForeignKey('category.id'), nullable=False)
     category = relationship(Category)
-    owner_id = Column(Integer, ForeignKey('user.id'))
+    owner = Column(String(80), ForeignKey('user.username'))
     user = relationship(User)
     created_time = Column(DateTime, default=datetime.datetime.utcnow)
 
@@ -65,7 +65,7 @@ class  Item(Base):
             'id': self.id,
             'category_id': self.category_id,
             'createdTime': self.created_time,
-            'owner_id':self.owner_id
+            'owner':self.owner
         }
 
 engine = create_engine('sqlite:///catalogwithusers.db')

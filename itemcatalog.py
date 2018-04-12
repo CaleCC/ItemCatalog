@@ -25,9 +25,9 @@ def getCatalog():
 
 @app.route('/catalog/<int:category_id>/items')
 def getCategory(category_id):
-    #catalog = session.query(Category).filter_by(id = category_id).one()
+    category = session.query(Category).filter_by(id = category_id).one()
     items = session.query(Item).filter_by(category_id = category_id).all()
-    return render_template("items.html", category_id = category_id, items = items)
+    return render_template("items.html", category = category, items = items)
     #return 'this is the page to display items of a category %d' % category_id
 
 
@@ -84,7 +84,8 @@ def newItem(category_id):
         if request.method == 'POST':
             newItem = Item(name=request.form['name'],
                                    description=request.form['description'],
-                                   category_id=category_id)
+                                   category_id=category_id,
+                                   owner=login_session['username'])
             session.add(newItem)
             session.commit()
             return redirect(url_for('getCategory', category_id=category_id))
@@ -163,8 +164,16 @@ def signup():
     else:
         return render_template("signup.html")
 
+@app.route('/logout')
+def logout():
+    login_session.pop('username', None)
+    return redirect('/catalog/')
 
-
+@app.route('/item/<int:item_id>/json')
+def getCatalogJson(item_id):
+    item = session.query(Item).filter_by(id=item_id).one()
+    print jsonify(item = item.serialize)
+    return jsonify(item = item.serialize)
 
 
 
