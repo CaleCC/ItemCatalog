@@ -11,21 +11,32 @@ DBSession = sessionmaker(bind=engine)
 
 session = DBSession()
 
-user = User(username = 'Eddie')
-user.hash_password('12345')
-session.add(user)
 
-user2 = User(username = 'Eason')
-user2.hash_password('12345')
-session.add(user2)
-category = Category(name = 'Snowboarding')
+category = Category(name='Snowboarding')
 session.add(category)
 
-item = Item(name = 'Goggles',
-            description = 'close-fitting eyeglasses with side shields, for' +
+category = Category(name='Fruits')
+session.add(category)
+
+
+item = Item(name='Goggles',
+            description='close-fitting eyeglasses with side shields, for' +
             'proecting the eyes from glare, dust, water',
-            category_id = '1',
-            owner = 'Eason')
+            category_id='1')
+session.add(item)
+
+
+item = Item(name='Apple',
+            description='Sweet fruit',
+            category_id='2')
+session.add(item)
+
+item = Item(name='Cherry',
+            description='The cherry fruits of commerce usually are obtained from\
+             cultivars of a limited number of species such as \
+             the sweet cherry and the sour cherry.',
+            category_id='2')
+session.add(item)
 
 session.add(item)
 session.commit()
