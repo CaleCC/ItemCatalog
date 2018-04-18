@@ -46,26 +46,32 @@ def getCatalog():
     )
 
 
-# show a list of items that belong to the same category
 @app.route('/catalog/<int:category_id>/items')
 def getCategory(category_id):
+    """
+    show a list of items that belong to the same category
+    """
     category = session.query(Category).filter_by(id=category_id).one()
     items = session.query(Item).filter_by(category_id=category_id).all()
     return render_template("items.html", category=category, items=items)
     # return 'this is the page to display items of a category %d' % category_id
 
 
-# display the detailed information of an item
 @app.route('/item/<int:item_id>')
 def getItem(item_id):
+    """
+    display the detailed information of an item
+    """
     item = session.query(Item).filter_by(id=item_id).one()
     catalog = session.query(Category).filter_by(id=item.category_id).one()
     return render_template("item.html", catalog=catalog, item=item)
 
 
-# add a new category
 @app.route('/catalog/new/', methods=['GET', 'POST'])
 def addCatalog():
+    """
+    add a new category
+    """
     if 'username' not in login_session:
         return redirect('/login')
     if request.method == 'POST':
@@ -78,9 +84,11 @@ def addCatalog():
         return render_template('newCategory.html')
 
 
-# delete a category
 @app.route('/catalog/<int:category_id>/delete/', methods=['GET', 'POST'])
 def deleteCategory(category_id):
+    """
+   delete a category
+    """
     category = session.query(Category).filter_by(id=category_id).one()
     if 'username' not in login_session:
         return redirect('/login')
@@ -91,11 +99,12 @@ def deleteCategory(category_id):
     else:
         return render_template('deleteCategory.html', category=category)
 
-# create a new Item
-
 
 @app.route('/catalog/<int:category_id>/item/new/', methods=['GET', "POST"])
 def newItem(category_id):
+    """
+     create a new Item
+    """
     if 'username' not in login_session:
         return redirect('/login')
     category = session.query(
@@ -113,11 +122,13 @@ def newItem(category_id):
         return render_template('newItem.html', category=category)
 
 
-# edit an item
 @app.route(
     '/catalog/<int:category_id>/item/<int:item_id>/edit/',
     methods=['GET', 'POST'])
 def editItem(item_id, category_id):
+    """
+    edit an item
+    """
     # check if user is logged in, if not redirect to login page
     if 'username' not in login_session:
         flash('Only authorized user can editItem. Please log in.')
@@ -142,9 +153,11 @@ def editItem(item_id, category_id):
     # return 'edit item %d here' % item_id
 
 
-# delete an item
 @app.route('/item/<int:item_id>/delete/', methods=['GET', 'POST'])
 def deleteItem(item_id):
+    """
+    delete an item
+    """
     if 'username' not in login_session:
         flash('Only authorized user can edit the item')
         return redirect('/login')
@@ -165,10 +178,12 @@ def deleteItem(item_id):
     # return 'delete item %d here' %item_id
 
 
-# this method followed the idea of udacity course about how to create
-# anti forgery Oauth Signin
 @app.route('/gconnect', methods=['POST'])
 def gconnect():
+    """
+    this method followed the idea of udacity course about how to create
+    anti forgery Oauth Signin
+    """
     # Validate state token
     if request.args.get('state') != login_session['state']:
         response = make_response(json.dumps('Invalid state parameter.'), 401)
@@ -254,8 +269,11 @@ def gconnect():
     return output
 
 
-@app.route('/login', methods=['GET', 'POST'])
+@app.route('/login', methods=['GET'])
 def login():
+    """
+    render the login page
+    """
     state = ''.join(random.choice(string.ascii_uppercase + string.digits)
                     for x in xrange(32))
     login_session['state'] = state
@@ -265,6 +283,11 @@ def login():
 
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
+    """
+    create a new user
+    this part of code is not called because the project
+    requires google sign in, not local authentication.
+    """
     if request.method == 'POST':
         print 'method is post'
         name = request.form['name']
@@ -321,9 +344,11 @@ def gdisconnect():
         return response
 
 
-# The end point that returns a Json object
 @app.route('/item/<int:item_id>/json')
 def getCatalogJson(item_id):
+    """
+    The end point that returns a Json object
+    """
     item = session.query(Item).filter_by(id=item_id).one()
     print jsonify(item=item.serialize)
     return jsonify(item=item.serialize)

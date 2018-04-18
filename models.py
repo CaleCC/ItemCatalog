@@ -20,6 +20,10 @@ secret_key = ''.join(random.choice(
 
 
 class User(Base):
+    """
+    User entity
+    This entity is not used because we do not use local authentication
+    """
     __tablename__ = 'user'
     id = Column(Integer, primary_key=True)
     username = Column(String(32), index=True)
@@ -49,6 +53,9 @@ class User(Base):
 
 
 class Category(Base):
+    """
+    category is the parent of item
+    """
     __tablename__ = 'category'
     id = Column(Integer, primary_key=True)
     name = Column(Integer, nullable=False)
@@ -56,6 +63,11 @@ class Category(Base):
 
 
 class Item(Base):
+    """
+    item is the child of parent
+    it has has category_id to identify the category it belongs to
+    ower field idenfity the creater of this item
+    """
     __tablename__ = 'item'
     name = Column(String(80), nullable=False)
     id = Column(Integer, primary_key=True)
