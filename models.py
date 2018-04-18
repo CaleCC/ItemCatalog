@@ -42,7 +42,7 @@ class User(Base):
             data = s.loads(token)
         except SignatureExpired:
             return None
-        except Badsignature:
+        except BadSignature:
             return None
         user_id = data['id']
         return user_id
@@ -52,6 +52,7 @@ class Category(Base):
     __tablename__ = 'category'
     id = Column(Integer, primary_key=True)
     name = Column(Integer, nullable=False)
+    item = relationship('Item', cascade="all, delete-orphan")
 
 
 class Item(Base):

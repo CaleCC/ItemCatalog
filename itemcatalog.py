@@ -1,5 +1,11 @@
-from flask import Flask, render_template, request, redirect, url_for, jsonify
-from flas import abort, flash
+from flask import (Flask,
+                   render_template,
+                   request,
+                   redirect,
+                   url_for,
+                   jsonify,
+                   abort,
+                   flash)
 from flask import session as login_session
 from sqlalchemy import create_engine, desc
 from sqlalchemy.orm import sessionmaker
@@ -26,6 +32,7 @@ DBSession = sessionmaker(bind=engine)
 session = DBSession()
 
 
+# display all the categories and latest items
 @app.route('/')
 @app.route('/catalog/')
 def getCatalog():
@@ -39,6 +46,7 @@ def getCatalog():
     )
 
 
+# show a list of items that belong to the same category
 @app.route('/catalog/<int:category_id>/items')
 def getCategory(category_id):
     category = session.query(Category).filter_by(id=category_id).one()
@@ -47,15 +55,15 @@ def getCategory(category_id):
     # return 'this is the page to display items of a category %d' % category_id
 
 
+# display the detailed information of an item
 @app.route('/item/<int:item_id>')
 def getItem(item_id):
     item = session.query(Item).filter_by(id=item_id).one()
     catalog = session.query(Category).filter_by(id=item.category_id).one()
     return render_template("item.html", catalog=catalog, item=item)
 
+
 # add a new category
-
-
 @app.route('/catalog/new/', methods=['GET', 'POST'])
 def addCatalog():
     if 'username' not in login_session:
@@ -64,16 +72,18 @@ def addCatalog():
         newCatalog = Category(name=request.form['name'])
         session.add(newCatalog)
         session.commit()
+        flash('new category added!')
         return redirect(url_for('getCatalog'))
     else:
         return render_template('newCategory.html')
 
-# should allow delete of a category?
 
-
+# delete a category
 @app.route('/catalog/<int:category_id>/delete/', methods=['GET', 'POST'])
 def deleteCategory(category_id):
     category = session.query(Category).filter_by(id=category_id).one()
+    if 'username' not in login_session:
+        return redirect('/login')
     if request.method == 'POST':
         session.delete(category)
         session.commit()
@@ -81,23 +91,7 @@ def deleteCategory(category_id):
     else:
         return render_template('deleteCategory.html', category=category)
 
-
-@app.route('/catalog/<int:category_id>/edit/', methods=['GET', 'POST'])
-def editCategory(category_id):
-    if 'username' not in login_session:
-        return redirect('/login')
-    editedCategory = session.query(
-        Category).filter_by(id=category_id).one()
-    if request.method == 'POST':
-        if request.form['name']:
-            editedCategory.name = request.form['name']
-            session.add(editedCategory)
-            session.commit()
-            return redirect(url_for('getCatalog'))
-    else:
-        return render_template(
-            'editCategory.html', category=editedCategory
-        )
+# create a new Item
 
 
 @app.route('/catalog/<int:category_id>/item/new/', methods=['GET', "POST"])
@@ -110,21 +104,30 @@ def newItem(category_id):
         newItem = Item(name=request.form['name'],
                        description=request.form['description'],
                        category_id=category_id,
-                       owner=login_session['username'])
+                       owner=login_session['gplus_id'])
         session.add(newItem)
         session.commit()
+        flash('New item added!')
         return redirect(url_for('getCategory', category_id=category_id))
     else:
         return render_template('newItem.html', category=category)
 
 
+# edit an item
 @app.route(
     '/catalog/<int:category_id>/item/<int:item_id>/edit/',
     methods=['GET', 'POST'])
 def editItem(item_id, category_id):
+    # check if user is logged in, if not redirect to login page
     if 'username' not in login_session:
+        flash('Only authorized user can editItem. Please log in.')
         return redirect('/login')
     editedItem = session.query(Item).filter_by(id=item_id).one()
+    # only allow owner to edit the item
+    if login_session['gplus_id'] != editedItem.owner:
+        flash('You are not the owner of the item. Please create a new\
+         item of your own to edit')
+        return redirect(url_for('newItem', category_id=category_id))
     if request.method == 'POST':
         if request.form['name']:
             editedItem.name = request.form['name']
@@ -139,24 +142,31 @@ def editItem(item_id, category_id):
     # return 'edit item %d here' % item_id
 
 
+# delete an item
 @app.route('/item/<int:item_id>/delete/', methods=['GET', 'POST'])
 def deleteItem(item_id):
     if 'username' not in login_session:
+        flash('Only authorized user can edit the item')
         return redirect('/login')
     itemToDelete = session.query(Item).filter_by(id=item_id).one()
+    # only allow owner to edit the item
+    if login_session['gplus_id'] != itemToDelete.owner:
+        flash('Only owner of the item can delete it.')
+        return redirect(url_for(
+            'getCategory', category_id=itemToDelete.category_id))
     if request.method == 'POST':
         category_id = itemToDelete.category_id
         session.delete(itemToDelete)
         session.commit()
+        flash('Item deleted.')
         return redirect(url_for('getCategory', category_id=category_id))
     else:
         return render_template('deleteItem.html', item=itemToDelete)
     # return 'delete item %d here' %item_id
 
+
 # this method followed the idea of udacity course about how to create
 # anti forgery Oauth Signin
-
-
 @app.route('/gconnect', methods=['POST'])
 def gconnect():
     # Validate state token
@@ -309,12 +319,6 @@ def gdisconnect():
             'Failed to revoke token for given user.', 400))
         response.headers['Content-Type'] = 'application/json'
         return response
-
-
-@app.route('/logout')
-def logout():
-    login_session.pop('username', None)
-    return redirect('/catalog/')
 
 
 # The end point that returns a Json object

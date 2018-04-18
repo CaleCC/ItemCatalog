@@ -1,16 +1,26 @@
-
-<div class="row top-menu bgblue"  >
+<div class="row top-menu bgblue">
 	<div class="col-md-6">
 		<a href="{{url_for('getCatalog')}}">
 			<h1>Catalog App</h1>
+			{% with messages = get_flashed_messages() %} {% if messages %}
+			<ul class=flashes>
+				{% for message in messages %}
+				<li>{{ message }}</li>
+				{% endfor %}
+			</ul>
+			{% endif %} {% endwith %} {% block body %}{% endblock %}
 		</a>
 	</div>
 	<div class="col-md-6 text-right">
-					{%if 'username' not in session %}
-			 <a href="{{url_for('login')}}"><button type="button">Login</button></a>
-			{% else %}
-			<a href="{{url_for('gdisconnect')}}"><button type="button">Logout</button> </a>
-			{% endif %}
-		
+		{%if 'username' not in session %}
+		<a href="{{url_for('login')}}">
+			<button type="button">Login</button>
+		</a>
+		{% else %}
+		<a href="{{url_for('gdisconnect')}}">
+			<button type="button">Logout</button>
+		</a>
+		{% endif %}
+
 	</div>
 </div>

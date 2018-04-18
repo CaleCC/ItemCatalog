@@ -2,7 +2,7 @@
 {% block content %}
 {% include "header.html" %}
 <div class='row'>
-    <h2>All items in category {{category.name}}</h2>
+    <h2>All items in category {{category.name}}</h2> <button><a href="{{url_for('deleteCategory', category_id=category.id)}}">Delete Category</a></button>
     
     {% for i in items %}
 
